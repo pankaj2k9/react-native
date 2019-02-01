@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import { Card, Icon, FormInput, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -64,6 +64,12 @@ const RenderDish = (props) => {
         else
             return false;
     }
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+        if (dx > 200)
+            return true;
+        else
+            return false;
+    }
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: (e, gestureState) => {
@@ -82,10 +88,22 @@ const RenderDish = (props) => {
                     ],
                     { cancelable: false }
                 );
+            if (recognizeComment(gestureState))
+                props.onPressModal();
 
             return true;
         }
     })
+
+    const shareDish = (title, message, url) => {
+        Share.share({
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        }, {
+                dialogTitle: 'Share ' + title
+            })
+    }
 
     if (dish != null) {
         return (
@@ -118,6 +136,15 @@ const RenderDish = (props) => {
                             containerStyle={styles.addCommentIcon}
                             onPress={() => props.onPressModal()}
                         />
+
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
                     </View>
                 </Card>
 
@@ -195,8 +222,8 @@ class DishDetail extends Component {
                 <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
                 <Modal animationType={"slide"} transparent={false}
                     visible={this.state.showModal}
-                    onDismiss={(e) => { e.preventDefault; this.toggleModal() }}
-                    onRequestClose={(e) => { e.preventDefault; this.toggleModal() }}>
+                    onDismiss={() => { this.toggleModal() }}
+                    onRequestClose={() => { this.toggleModal() }}>
                     <ScrollView keyboardShouldPersistTaps={'never'} contentContainerStyle={styles.modal}>
 
                         <Rating

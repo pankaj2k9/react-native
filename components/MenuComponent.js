@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList } from 'react-native';
+import { Text, View, FlatList } from 'react-native';
 import { ListItem, Tile } from 'react-native-elements';
 import { DISHES } from '../shared/dishes';
 import { Loading } from './LoadingComponent';
