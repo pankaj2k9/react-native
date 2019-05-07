@@ -173,14 +173,12 @@ class DishDetail extends Component {
     }
 
     handleAddComment = () => {
-        Keyboard.dismiss();
         const { rating, comment, author } = this.state;
         const dishId = this.props.navigation.getParam('dishId', '');
         const id = this.props.comments.comments.length;
         let d = new Date();
         let date = d.toISOString();
         this.props.postComment({ id, dishId, rating, comment, author, date });
-        this.resetForm();
         this.toggleModal();
 
     }
@@ -271,7 +269,7 @@ class DishDetail extends Component {
                         </View>
                         <View style={{ marginTop: 20 }}>
                             <Button
-                                onPress={() => { this.handleAddComment(); }}
+                                onPress={() => { this.handleAddComment(); this.resetForm(); }}
                                 color="#512DA8"
                                 title="Submit"
 
